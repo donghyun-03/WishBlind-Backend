@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: wishBlind
+  profiles:
+    active: dev   # 기본적으로 dev 프로파일 활성화
+
+server:
+  port: ${SERVER_PORT:8080}
+
+logging:
+  level:
+    root: info
