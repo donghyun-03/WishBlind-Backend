@@ -1,0 +1,12 @@
+package com.example.wishBlind.global.config;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+
+/**
+ * JPA Auditing 활성화. BaseEntity의 createdAt/updatedAt이 자동으로 채워지게 한다.
+ */
+@Configuration
+@EnableJpaAuditing
+public class JpaAuditingConfig {
+}
