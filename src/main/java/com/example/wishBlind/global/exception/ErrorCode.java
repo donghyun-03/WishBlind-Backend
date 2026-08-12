@@ -20,7 +20,10 @@ public enum ErrorCode {
     INVALID_INVITE(HttpStatus.BAD_REQUEST, "I001", "유효하지 않은 초대입니다."),
 
     // R = 받는 사람 취향
-    PREFERENCE_ALREADY_SUBMITTED(HttpStatus.CONFLICT, "R001", "이미 취향을 입력한 초대입니다.");
+    PREFERENCE_ALREADY_SUBMITTED(HttpStatus.CONFLICT, "R001", "이미 취향을 입력한 초대입니다."),
+
+    // P = 상품
+    PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "P001", "상품을 찾을 수 없습니다.");
 
     private final HttpStatus status;
     private final String code;
