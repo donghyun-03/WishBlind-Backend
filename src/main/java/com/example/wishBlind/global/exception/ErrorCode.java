@@ -11,7 +11,16 @@ public enum ErrorCode {
     INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "C001", "예상치 못한 서버 오류가 발생했습니다."),
     INVALID_INPUT(HttpStatus.BAD_REQUEST, "C002", "요청 값이 올바르지 않습니다."),
     NOT_FOUND(HttpStatus.NOT_FOUND, "C003", "요청한 리소스를 찾을 수 없습니다."),
-    METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "C004", "허용되지 않은 요청 방식입니다.");
+    METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "C004", "허용되지 않은 요청 방식입니다."),
+
+    // G = 선물 세션
+    GIFT_SESSION_NOT_FOUND(HttpStatus.NOT_FOUND, "G001", "선물 세션을 찾을 수 없습니다."),
+
+    // I = 초대
+    INVALID_INVITE(HttpStatus.BAD_REQUEST, "I001", "유효하지 않은 초대입니다."),
+
+    // R = 받는 사람 취향
+    PREFERENCE_ALREADY_SUBMITTED(HttpStatus.CONFLICT, "R001", "이미 취향을 입력한 초대입니다.");
 
     private final HttpStatus status;
     private final String code;

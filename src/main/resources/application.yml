@@ -7,6 +7,9 @@ spring:
 server:
   port: ${SERVER_PORT:8080}
 
+app:
+  invite-base-url: ${INVITE_BASE_URL:http://localhost:8080/invite}
+
 logging:
   level:
     root: info
