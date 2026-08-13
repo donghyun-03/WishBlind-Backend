@@ -23,7 +23,12 @@ public enum ErrorCode {
     PREFERENCE_ALREADY_SUBMITTED(HttpStatus.CONFLICT, "R001", "이미 취향을 입력한 초대입니다."),
 
     // P = 상품
-    PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "P001", "상품을 찾을 수 없습니다.");
+    PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "P001", "상품을 찾을 수 없습니다."),
+
+    // D = 추천(recommenDation)
+    PREFERENCE_NOT_SUBMITTED(HttpStatus.BAD_REQUEST, "D001", "받는 사람이 아직 취향을 입력하지 않았습니다."),
+    NO_CANDIDATE(HttpStatus.UNPROCESSABLE_ENTITY, "D002", "조건에 맞는 상품이 없습니다. 예산이나 카테고리를 조정해 주세요."),
+    RECOMMENDATION_NOT_FOUND(HttpStatus.NOT_FOUND, "D003", "추천을 찾을 수 없습니다.");
 
     private final HttpStatus status;
     private final String code;
