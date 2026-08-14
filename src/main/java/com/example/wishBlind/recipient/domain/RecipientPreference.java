@@ -30,7 +30,7 @@ public class RecipientPreference extends BaseEntity {
     private GiftSession giftSession;
 
     // STEP 01 색상 (복수)
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "recipient_preference_color",
             joinColumns = @JoinColumn(name = "recipient_preference_id"))
     @Enumerated(EnumType.STRING)
@@ -56,7 +56,7 @@ public class RecipientPreference extends BaseEntity {
     private WearStyle wearStyle;
 
     // STEP 05 피하고 싶은 요소 (복수) + 자유 입력
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "recipient_preference_avoid",
             joinColumns = @JoinColumn(name = "recipient_preference_id"))
     @Enumerated(EnumType.STRING)

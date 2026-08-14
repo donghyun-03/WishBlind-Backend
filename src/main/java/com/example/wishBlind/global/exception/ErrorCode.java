@@ -20,7 +20,20 @@ public enum ErrorCode {
     INVALID_INVITE(HttpStatus.BAD_REQUEST, "I001", "유효하지 않은 초대입니다."),
 
     // R = 받는 사람 취향
-    PREFERENCE_ALREADY_SUBMITTED(HttpStatus.CONFLICT, "R001", "이미 취향을 입력한 초대입니다.");
+    PREFERENCE_ALREADY_SUBMITTED(HttpStatus.CONFLICT, "R001", "이미 취향을 입력한 초대입니다."),
+
+    // P = 상품
+    PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "P001", "상품을 찾을 수 없습니다."),
+
+    // D = 추천(recommenDation)
+    PREFERENCE_NOT_SUBMITTED(HttpStatus.BAD_REQUEST, "D001", "받는 사람이 아직 취향을 입력하지 않았습니다."),
+    NO_CANDIDATE(HttpStatus.UNPROCESSABLE_ENTITY, "D002", "조건에 맞는 상품이 없습니다. 예산이나 카테고리를 조정해 주세요."),
+    RECOMMENDATION_NOT_FOUND(HttpStatus.NOT_FOUND, "D003", "추천을 찾을 수 없습니다."),
+
+    // V = 전달(deliVery)
+    DELIVERY_INFO_REQUIRED(HttpStatus.BAD_REQUEST, "V001", "선택한 전달 방법에 필요한 정보가 누락되었습니다."),
+    NOT_FINALIZED(HttpStatus.BAD_REQUEST, "V002", "최종 상품을 선택한 뒤에 전달 정보를 입력할 수 있습니다."),
+    DELIVERY_NOT_FOUND(HttpStatus.NOT_FOUND, "V003", "전달 정보를 찾을 수 없습니다.");
 
     private final HttpStatus status;
     private final String code;
