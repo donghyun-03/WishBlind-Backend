@@ -33,7 +33,13 @@ public enum ErrorCode {
     // V = 전달(deliVery)
     DELIVERY_INFO_REQUIRED(HttpStatus.BAD_REQUEST, "V001", "선택한 전달 방법에 필요한 정보가 누락되었습니다."),
     NOT_FINALIZED(HttpStatus.BAD_REQUEST, "V002", "최종 상품을 선택한 뒤에 전달 정보를 입력할 수 있습니다."),
-    DELIVERY_NOT_FOUND(HttpStatus.NOT_FOUND, "V003", "전달 정보를 찾을 수 없습니다.");
+    DELIVERY_NOT_FOUND(HttpStatus.NOT_FOUND, "V003", "전달 정보를 찾을 수 없습니다."),
+
+    // PM = 결제(payment, mock)
+    PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "PM001", "결제 정보를 찾을 수 없습니다."),
+    PAYMENT_ALREADY_PAID(HttpStatus.CONFLICT, "PM002", "이미 결제가 완료되었습니다."),
+    PAYMENT_KEY_MISMATCH(HttpStatus.BAD_REQUEST, "PM003", "결제 정보가 일치하지 않습니다."),
+    PAYMENT_FAILED(HttpStatus.PAYMENT_REQUIRED, "PM004", "결제에 실패했습니다.");
 
     private final HttpStatus status;
     private final String code;
