@@ -50,7 +50,6 @@ public class GoogleOAuthClient implements OAuthClient {
     public OAuthUserInfo fetch(String accessToken) {
         String expectedAudience = properties.googleClientId();
         if (expectedAudience == null || expectedAudience.isBlank()) {
-            // 설정이 없으면 통과시키지 않는다. 검증 없이 여는 편보다 소셜 로그인이 막히는 편이 낫다.
             log.error("oauth.google-client-id 미설정 — 구글 로그인을 거부한다");
             throw new BusinessException(ErrorCode.OAUTH_VERIFICATION_FAILED);
         }

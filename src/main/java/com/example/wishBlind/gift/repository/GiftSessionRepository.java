@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface GiftSessionRepository extends JpaRepository<GiftSession, Long> {
 
-    List<GiftSession> findAllByOrderByCreatedAtDesc();
+    List<GiftSession> findAllByUserIdOrderByCreatedAtDesc(Long userId);
 
     Optional<GiftSession> findByInviteToken(String inviteToken);
 

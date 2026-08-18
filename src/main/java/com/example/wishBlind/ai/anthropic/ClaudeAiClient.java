@@ -71,7 +71,6 @@ public class ClaudeAiClient implements AiClient {
             MessageCreateParams params = MessageCreateParams.builder()
                     .model(properties.model())
                     .maxTokens(properties.maxTokens())
-                    // 코멘트 한 문단이라 깊게 생각할 이유가 없다. effort를 낮춰 지연과 비용을 줄인다.
                     .outputConfig(OutputConfig.builder().effort(OutputConfig.Effort.LOW).build())
                     .system(promptBuilder.system())
                     .addUserMessage(userPrompt)
@@ -80,7 +79,6 @@ public class ClaudeAiClient implements AiClient {
             Message message = client.messages().create(params);
             long latencyMs = System.currentTimeMillis() - startedAt;
 
-            // 안전 분류기가 거절하면 예외가 아니라 HTTP 200으로 온다. content보다 먼저 본다.
             if (isRefusal(message)) {
                 return degrade(command, promptHash, latencyMs, ErrorCode.LLM_REFUSAL, null);
             }

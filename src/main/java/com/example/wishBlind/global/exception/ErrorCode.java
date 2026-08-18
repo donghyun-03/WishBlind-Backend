@@ -15,6 +15,7 @@ public enum ErrorCode {
 
     // G = 선물 세션
     GIFT_SESSION_NOT_FOUND(HttpStatus.NOT_FOUND, "G001", "선물 세션을 찾을 수 없습니다."),
+    GIFT_SESSION_FORBIDDEN(HttpStatus.FORBIDDEN, "G002", "다른 회원의 선물 세션입니다."),
 
     // I = 초대
     INVALID_INVITE(HttpStatus.BAD_REQUEST, "I001", "유효하지 않은 초대입니다."),

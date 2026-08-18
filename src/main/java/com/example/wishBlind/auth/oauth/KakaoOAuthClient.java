@@ -49,7 +49,6 @@ public class KakaoOAuthClient implements OAuthClient {
     public OAuthUserInfo fetch(String accessToken) {
         String expectedAppId = properties.kakaoAppId();
         if (expectedAppId == null || expectedAppId.isBlank()) {
-            // 설정이 없으면 통과시키지 않는다. 검증 없이 여는 편보다 소셜 로그인이 막히는 편이 낫다.
             log.error("oauth.kakao-app-id 미설정 — 카카오 로그인을 거부한다");
             throw new BusinessException(ErrorCode.OAUTH_VERIFICATION_FAILED);
         }

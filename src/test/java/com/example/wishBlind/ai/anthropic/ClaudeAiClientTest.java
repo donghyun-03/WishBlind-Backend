@@ -71,7 +71,6 @@ class ClaudeAiClientTest {
         LlmCallLog saved = captor.getValue();
         assertThat(saved.isSuccess()).isFalse();
         assertThat(saved.getFailureCode()).isEqualTo("L006");
-        // 프롬프트 원문이 아니라 해시만 남아야 한다 (취향 정보가 들어 있음)
         assertThat(saved.getPromptHash()).hasSize(64).doesNotContain("고마운 마음");
     }
 

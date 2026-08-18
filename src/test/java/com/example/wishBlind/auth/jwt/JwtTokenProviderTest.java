@@ -30,7 +30,6 @@ class JwtTokenProviderTest {
     @Test
     @DisplayName("만료된 토큰은 EXPIRED_TOKEN으로 거부한다")
     void rejectsExpiredToken() {
-        // 유효기간(30분)보다 더 과거에 발급된 것으로 만들어 이미 만료된 토큰을 얻는다
         Instant longAgo = Instant.now().minus(ACCESS_VALIDITY_SECONDS + 60, ChronoUnit.SECONDS);
         String expired = provider.createAccessToken(42L, longAgo);
 
