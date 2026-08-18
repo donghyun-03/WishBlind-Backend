@@ -32,8 +32,8 @@ public class DeliveryService {
 
     /** 전달 정보 입력/수정 → 상태 PREPARING(배송 준비 중). */
     @Transactional
-    public DeliveryResponse submit(Long giftSessionId, DeliveryRequest request) {
-        GiftSession session = giftSessionService.findById(giftSessionId);
+    public DeliveryResponse submit(Long giftSessionId, DeliveryRequest request, Long userId) {
+        GiftSession session = giftSessionService.findOwned(giftSessionId, userId);
 
         if (session.getStatus() != GiftStatus.FINALIZED && session.getStatus() != GiftStatus.PREPARING) {
             throw new BusinessException(ErrorCode.NOT_FINALIZED);
@@ -61,7 +61,8 @@ public class DeliveryService {
         return DeliveryResponse.from(delivery);
     }
 
-    public DeliveryResponse get(Long giftSessionId) {
+    public DeliveryResponse get(Long giftSessionId, Long userId) {
+        giftSessionService.findOwned(giftSessionId, userId);
         Delivery delivery = deliveryRepository.findByGiftSession_Id(giftSessionId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DELIVERY_NOT_FOUND));
         return DeliveryResponse.from(delivery);
@@ -69,8 +70,8 @@ public class DeliveryService {
 
     /** 수령 완료 처리 → 상태 COMPLETED(선물 완료). 이 시점부터 공개 가능. */
     @Transactional
-    public void complete(Long giftSessionId) {
-        GiftSession session = giftSessionService.findById(giftSessionId);
+    public void complete(Long giftSessionId, Long userId) {
+        GiftSession session = giftSessionService.findOwned(giftSessionId, userId);
         session.changeStatus(GiftStatus.COMPLETED);
     }
 

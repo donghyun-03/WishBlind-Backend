@@ -39,8 +39,8 @@ public class RecommendationService {
 
     /** 두 사람 정보 결합 → 후보 3개 생성. 상태 RECOMMENDED 전환. */
     @Transactional
-    public List<RecommendationResponse> generate(Long giftSessionId) {
-        GiftSession session = giftSessionService.findById(giftSessionId);
+    public List<RecommendationResponse> generate(Long giftSessionId, Long userId) {
+        GiftSession session = giftSessionService.findOwned(giftSessionId, userId);
         RecipientPreference pref = preferenceRepository.findByGiftSession_Id(giftSessionId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PREFERENCE_NOT_SUBMITTED));
 
@@ -89,23 +89,33 @@ public class RecommendationService {
         }
 
         session.changeStatus(GiftStatus.RECOMMENDED);
-        return getList(giftSessionId);
+        // 소유자 확인은 이 메서드 진입 시 이미 끝났다.
+        return toResponses(giftSessionId);
     }
 
-    public List<RecommendationResponse> getList(Long giftSessionId) {
+    public List<RecommendationResponse> getList(Long giftSessionId, Long userId) {
+        giftSessionService.findOwned(giftSessionId, userId);
+        return toResponses(giftSessionId);
+    }
+
+    private List<RecommendationResponse> toResponses(Long giftSessionId) {
         return recommendationRepository.findByGiftSession_IdOrderByRankAsc(giftSessionId).stream()
                 .map(RecommendationResponse::from)
                 .toList();
     }
 
-    public RecommendationDetailResponse getDetail(Long recommendationId) {
-        return RecommendationDetailResponse.from(findById(recommendationId));
+    public RecommendationDetailResponse getDetail(Long recommendationId, Long userId) {
+        Recommendation recommendation = findById(recommendationId);
+        if (!recommendation.getGiftSession().isOwnedBy(userId)) {
+            throw new BusinessException(ErrorCode.GIFT_SESSION_FORBIDDEN);
+        }
+        return RecommendationDetailResponse.from(recommendation);
     }
 
     /** 선물자가 최종 상품 선택 → 상태 FINALIZED. */
     @Transactional
-    public void finalizeSelection(Long giftSessionId, Long recommendationId) {
-        GiftSession session = giftSessionService.findById(giftSessionId);
+    public void finalizeSelection(Long giftSessionId, Long recommendationId, Long userId) {
+        GiftSession session = giftSessionService.findOwned(giftSessionId, userId);
         List<Recommendation> recs = recommendationRepository.findByGiftSession_IdOrderByRankAsc(giftSessionId);
 
         boolean found = false;

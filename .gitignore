@@ -1,4 +1,4 @@
-HELP.md
+﻿HELP.md
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
@@ -39,3 +39,7 @@ out/
 ### env & logs ###
 .env
 *.log
+
+
+### local-only config (DB password, etc) - never commit
+src/main/resources/application-local.yml

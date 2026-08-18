@@ -15,6 +15,7 @@ public enum ErrorCode {
 
     // G = 선물 세션
     GIFT_SESSION_NOT_FOUND(HttpStatus.NOT_FOUND, "G001", "선물 세션을 찾을 수 없습니다."),
+    GIFT_SESSION_FORBIDDEN(HttpStatus.FORBIDDEN, "G002", "다른 회원의 선물 세션입니다."),
 
     // I = 초대
     INVALID_INVITE(HttpStatus.BAD_REQUEST, "I001", "유효하지 않은 초대입니다."),
@@ -39,7 +40,35 @@ public enum ErrorCode {
     PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "PM001", "결제 정보를 찾을 수 없습니다."),
     PAYMENT_ALREADY_PAID(HttpStatus.CONFLICT, "PM002", "이미 결제가 완료되었습니다."),
     PAYMENT_KEY_MISMATCH(HttpStatus.BAD_REQUEST, "PM003", "결제 정보가 일치하지 않습니다."),
-    PAYMENT_FAILED(HttpStatus.PAYMENT_REQUIRED, "PM004", "결제에 실패했습니다.");
+    PAYMENT_FAILED(HttpStatus.PAYMENT_REQUIRED, "PM004", "결제에 실패했습니다."),
+
+    // S = 매장 체험(Store fitting)
+    FITTING_NOT_FOUND(HttpStatus.NOT_FOUND, "S001", "매장 체험 예약을 찾을 수 없습니다."),
+
+    // U = 사용자(User, 마이페이지)
+    // 회원 없음은 인증 파트의 USER_NOT_FOUND(A010)를 공용으로 사용한다.
+    EMAIL_DUPLICATE(HttpStatus.CONFLICT, "U002", "이미 사용 중인 이메일입니다."),
+
+    // A = 인증/회원
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "A001", "인증이 필요합니다."),
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "A002", "유효하지 않은 토큰입니다."),
+    EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "A003", "만료된 토큰입니다."),
+    // 이메일 없음과 비밀번호 틀림을 구분하지 않는다. 구분하면 가입 여부가 노출된다.
+    LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "A004", "이메일 또는 비밀번호가 올바르지 않습니다."),
+    EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "A005", "이미 사용 중인 이메일입니다."),
+    REQUIRED_TERMS_NOT_AGREED(HttpStatus.BAD_REQUEST, "A006", "필수 약관에 동의해야 합니다."),
+    SOCIAL_ACCOUNT_ALREADY_LINKED(HttpStatus.CONFLICT, "A007", "이미 다른 회원에게 연결된 소셜 계정입니다."),
+    SOCIAL_PROVIDER_ALREADY_LINKED(HttpStatus.CONFLICT, "A008", "이미 연결된 소셜 제공자입니다."),
+    OAUTH_VERIFICATION_FAILED(HttpStatus.UNAUTHORIZED, "A009", "소셜 로그인 검증에 실패했습니다."),
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "A010", "회원을 찾을 수 없습니다."),
+    WITHDRAWN_USER(HttpStatus.FORBIDDEN, "A011", "탈퇴한 회원입니다."),
+
+    // L = AI(LLM) 연결.
+    // AI 실패는 사용자에게 노출되지 않고 규칙 기반 코멘트로 폴백되므로, 이 코드들은
+    // HTTP 응답이 아니라 llm_call_logs에 실패 사유를 남기는 용도로만 쓴다.
+    LLM_PARSE_ERROR(HttpStatus.BAD_GATEWAY, "L002", "AI 응답 형식이 올바르지 않습니다."),
+    LLM_REFUSAL(HttpStatus.UNPROCESSABLE_CONTENT, "L003", "AI가 요청을 처리할 수 없습니다."),
+    LLM_CALL_FAILED(HttpStatus.BAD_GATEWAY, "L006", "AI 호출에 실패했습니다.");
 
     private final HttpStatus status;
     private final String code;
