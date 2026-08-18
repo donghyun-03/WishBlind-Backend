@@ -1,4 +1,4 @@
-package com.example.wishBlind.ai.anthropic;
+package com.example.wishBlind.ai.gemini;
 
 import com.example.wishBlind.ai.dto.AiRecommendationCommand;
 import org.springframework.stereotype.Component;

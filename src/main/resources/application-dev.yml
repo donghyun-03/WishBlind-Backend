@@ -5,10 +5,21 @@ spring:
     password: ${DB_PASSWORD:changeme}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+  # 스키마는 Flyway가 만든다. 2명이 각자 로컬 DB를 쓰는데 ddl-auto=update는
+  # 서로의 스키마가 조용히 갈라지게 두고, 컬럼 삭제나 타입 변경은 아예 반영하지 않는다.
+  #
+  # baseline-on-migrate: 이미 ddl-auto로 스키마가 만들어진 로컬 DB를 위한 설정이다.
+  # V1을 실행하지 않고 "적용됨"으로만 기록한다. 빈 DB에서는 V1부터 정상 실행된다.
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    baseline-version: 1
+
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: update   # 개발 단계 전용. 운영 환경에서는 validate 나 none 으로 변경
+      # Flyway가 만든 스키마와 엔티티가 어긋나면 기동 시점에 실패시킨다.
+      ddl-auto: validate
     show-sql: true
     properties:
       hibernate:
@@ -28,12 +39,12 @@ oauth:
   google-client-id: ${GOOGLE_CLIENT_ID:}
   kakao-app-id: ${KAKAO_APP_ID:}
 
-# AI 연결
-anthropic:
-  api-key: ${ANTHROPIC_API_KEY:}
-  model: claude-opus-5
-  max-tokens: 16000
-  timeout-seconds: 120
+# AI 연결. 키가 비어 있으면 규칙 기반 코멘트로 자동 대체된다(서비스는 정상 동작).
+gemini:
+  api-key: ${GEMINI_API_KEY:}
+  model: gemini-3.5-flash-lite
+  max-output-tokens: 600
+  timeout-seconds: 30
 
 logging:
   level:
