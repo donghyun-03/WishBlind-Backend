@@ -22,6 +22,12 @@ jwt:
   access-token-validity: 1800      # 30분
   refresh-token-validity: 1209600  # 14일
 
+# 소셜 로그인 토큰의 발급 대상 검증용 식별자(시크릿 아님).
+# 비어 있으면 소셜 로그인을 거부한다 — 검증 없이 여는 것보다 막히는 편이 안전하다.
+oauth:
+  google-client-id: ${GOOGLE_CLIENT_ID:}
+  kakao-app-id: ${KAKAO_APP_ID:}
+
 # AI 연결
 anthropic:
   api-key: ${ANTHROPIC_API_KEY:}

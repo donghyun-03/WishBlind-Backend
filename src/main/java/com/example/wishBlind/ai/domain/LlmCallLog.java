@@ -34,9 +34,6 @@ public class LlmCallLog extends BaseEntity {
     @Column(name = "prompt_hash", nullable = false, length = 64)
     private String promptHash;
 
-    @Column(name = "candidate_count", nullable = false)
-    private int candidateCount;
-
     @Column(name = "latency_ms", nullable = false)
     private long latencyMs;
 
@@ -53,11 +50,10 @@ public class LlmCallLog extends BaseEntity {
     @Column(name = "failure_code", length = 10)
     private String failureCode;
 
-    private LlmCallLog(String model, String promptHash, int candidateCount, long latencyMs,
+    private LlmCallLog(String model, String promptHash, long latencyMs,
                        Long inputTokens, Long outputTokens, boolean success, String failureCode) {
         this.model = model;
         this.promptHash = promptHash;
-        this.candidateCount = candidateCount;
         this.latencyMs = latencyMs;
         this.inputTokens = inputTokens;
         this.outputTokens = outputTokens;
@@ -65,15 +61,13 @@ public class LlmCallLog extends BaseEntity {
         this.failureCode = failureCode;
     }
 
-    public static LlmCallLog success(String model, String promptHash, int candidateCount,
-                                     long latencyMs, Long inputTokens, Long outputTokens) {
-        return new LlmCallLog(model, promptHash, candidateCount, latencyMs,
-                inputTokens, outputTokens, true, null);
+    public static LlmCallLog success(String model, String promptHash, long latencyMs,
+                                     Long inputTokens, Long outputTokens) {
+        return new LlmCallLog(model, promptHash, latencyMs, inputTokens, outputTokens, true, null);
     }
 
-    public static LlmCallLog failure(String model, String promptHash, int candidateCount,
+    public static LlmCallLog failure(String model, String promptHash,
                                      long latencyMs, String failureCode) {
-        return new LlmCallLog(model, promptHash, candidateCount, latencyMs,
-                null, null, false, failureCode);
+        return new LlmCallLog(model, promptHash, latencyMs, null, null, false, failureCode);
     }
 }

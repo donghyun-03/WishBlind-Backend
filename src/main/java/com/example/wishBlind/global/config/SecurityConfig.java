@@ -3,7 +3,7 @@ package com.example.wishBlind.global.config;
 import com.example.wishBlind.auth.jwt.JwtAuthenticationFilter;
 import com.example.wishBlind.global.common.ApiResponse;
 import com.example.wishBlind.global.exception.ErrorCode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import jakarta.servlet.DispatcherType;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +21,7 @@ import java.nio.charset.StandardCharsets;
  * JWT 기반 인증 설정.
  *
  * ★ 화이트리스트를 건드릴 때 주의할 것 ★
- * /api/invitations/** 는 반드시 열려 있어야 한다. 수령자는 비회원 상태로 초대 링크를
+ * /api/invite/** 는 반드시 열려 있어야 한다. 수령자는 비회원 상태로 초대 링크를
  * 열고 취향 테스트를 제출하기 때문에, 이 경로가 막히면 서비스 핵심 플로우가 통째로 죽는다.
  * SecurityWhitelistTest가 이 사실을 못박고 있으니 규칙을 바꾸면 그 테스트도 함께 볼 것.
  *
@@ -60,8 +60,14 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/auth/social/link").authenticated()
 
                         .requestMatchers("/api/auth/**").permitAll()
-                        // 수령자(비회원) 초대 확인 + 취향 테스트 경로 — 절대 막지 말 것
-                        .requestMatchers("/api/invitations/**").permitAll()
+
+                        // 수령자(비회원) 경로 — 절대 막지 말 것.
+                        //   GET  /api/invite/{token}              초대 확인
+                        //   POST /api/invite/verify               초대 코드 검증
+                        //   GET  /api/invite/{token}/taste-form   취향 테스트 문항
+                        //   POST /api/invite/{token}/preferences  취향 제출
+                        //   GET  /api/invite/{token}/reveal       수령 후 공개
+                        .requestMatchers("/api/invite/**").permitAll()
 
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/actuator/health").permitAll()

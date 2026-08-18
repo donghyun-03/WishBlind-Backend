@@ -1,79 +1,46 @@
 package com.example.wishBlind.ai.anthropic;
 
-import com.example.wishBlind.ai.AiRecommendCommand;
-import com.example.wishBlind.ai.CandidateProduct;
+import com.example.wishBlind.ai.dto.AiRecommendationCommand;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Map;
-import java.util.StringJoiner;
 
-/** 선물 정보를 프롬프트 텍스트로 조립한다. */
+/**
+ * 추천 코멘트 생성 프롬프트 조립.
+ *
+ * 후보 선정·점수·근거는 이미 규칙(MatchScoreService)이 계산해서 넘어온다.
+ * LLM은 그 결과를 사람이 읽을 문장으로 옮기는 일만 한다 — 새 사실을 만들지 않게 하는 게 핵심.
+ */
 @Component
 public class PromptBuilder {
 
     private static final String SYSTEM = """
-            당신은 선물 추천 전문가다. 선물하는 사람의 의도와 받는 사람의 취향을 함께 읽고,
-            주어진 후보 상품 중에서 가장 적합한 3개를 고른다.
+            당신은 선물 추천 코멘트를 쓰는 사람이다.
+            이미 계산된 추천 근거를 바탕으로, 선물하는 사람에게 건네는 한국어 코멘트를 쓴다.
 
             지켜야 할 것:
-            - 반드시 주어진 후보 목록 안의 productId만 사용한다. 목록에 없는 상품은 어떤 경우에도 만들지 않는다.
-            - 예산 상한을 넘는 상품은 고르지 않는다.
-            - 받는 사람이 "피하고 싶은 요소"로 꼽은 특성을 가진 상품은 고르지 않는다.
-            - 정확히 3개를 rank 1, 2, 3으로 매긴다. rank 1이 가장 추천하는 상품이다.
-            - 같은 상품을 두 번 고르지 않는다.
-
-            각 추천에 대해:
-            - matchScore는 받는 사람 취향과의 일치율을 0~100으로 매긴다.
-            - reasons는 "선물 의미 적합", "선호 색상 반영", "스타일 적합", "예산 범위 만족",
-              "브랜드 이미지 적합" 관점에서 해당하는 것만 짧은 문장으로 쓴다.
-            - colorScore, styleScore, practicalityScore는 각각 색상 적합도, 스타일 적합도, 실용성을 0~100으로 매긴다.
-            - considerations에는 사이즈나 착용·사용상 주의처럼 미리 알면 좋을 점을 쓴다. 없으면 빈 배열로 둔다.
-            - 모든 문장은 한국어로, 선물하는 사람에게 말하듯 자연스럽게 쓴다.
+            - 주어진 근거 안에서만 쓴다. 상품 사양이나 가격처럼 주어지지 않은 사실을 지어내지 않는다.
+            - 2~3문장, 200자 이내로 쓴다.
+            - 일치율 숫자를 그대로 읊지 말고, 왜 잘 맞는지를 말한다.
+            - '고려할 점'이 있으면 마지막에 한 문장으로 짚어준다.
+            - 광고 문구처럼 과장하지 않는다. 담백하게 쓴다.
+            - 코멘트 본문만 출력한다. 제목, 머리말, 따옴표, 내부 태그를 붙이지 않는다.
             """;
 
     public String system() {
         return SYSTEM;
     }
 
-    public String user(AiRecommendCommand command) {
+    public String user(AiRecommendationCommand command) {
         StringBuilder sb = new StringBuilder();
-
-        sb.append("## 선물하는 사람의 의도\n");
-        appendIfPresent(sb, "관계", command.relation());
-        appendIfPresent(sb, "기념일", command.anniversaryType());
-        sb.append("- 예산: ").append(command.budgetMin()).append("원 ~ ")
-                .append(command.budgetMax()).append("원 (상한 초과 불가)\n");
-        appendIfPresent(sb, "전하고 싶은 의미", command.meaningText());
+        appendIfPresent(sb, "기념일/목적", command.occasion());
+        appendIfPresent(sb, "전하고 싶은 의미", command.meaning());
         appendListIfPresent(sb, "선물 분위기", command.moods());
-
-        sb.append("\n## 받는 사람의 취향\n");
-        Map<String, List<String>> preferences = command.recipientPreferences();
-        if (preferences == null || preferences.isEmpty()) {
-            sb.append("- (응답 없음)\n");
-        } else {
-            preferences.forEach((question, answers) ->
-                    sb.append("- ").append(question).append(": ")
-                            .append(String.join(", ", answers)).append('\n'));
-        }
-        appendListIfPresent(sb, "피하고 싶은 요소", command.avoidElements());
-
-        sb.append("\n## 후보 상품\n");
-        for (CandidateProduct candidate : command.candidates()) {
-            sb.append("- productId=").append(candidate.productId())
-                    .append(" | ").append(candidate.brand())
-                    .append(" | ").append(candidate.name())
-                    .append(" | ").append(candidate.category())
-                    .append(" | ").append(candidate.price()).append("원");
-            if (candidate.attributes() != null && !candidate.attributes().isEmpty()) {
-                StringJoiner attrs = new StringJoiner(", ", " | ", "");
-                candidate.attributes().forEach((k, v) -> attrs.add(k + "=" + v));
-                sb.append(attrs);
-            }
-            sb.append('\n');
-        }
-
-        sb.append("\n위 후보 중에서 3개를 골라 rank 1~3으로 추천해줘.");
+        appendIfPresent(sb, "추천 상품", command.productName());
+        sb.append("- 취향 일치율: ").append(command.matchRate()).append("%\n");
+        appendListIfPresent(sb, "매칭 근거", command.reasons());
+        appendListIfPresent(sb, "고려할 점", command.considerations());
+        sb.append("\n이 선물을 추천하는 코멘트를 써줘.");
         return sb.toString();
     }
 

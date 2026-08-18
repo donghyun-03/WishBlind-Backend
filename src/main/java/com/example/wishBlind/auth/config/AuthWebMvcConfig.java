@@ -11,7 +11,7 @@ import java.util.List;
 
 /** {@code @AuthUser} 리졸버 등록. global/config를 건드리지 않으려고 auth 쪽에 둔다. */
 @Configuration
-@EnableConfigurationProperties(JwtProperties.class)
+@EnableConfigurationProperties({JwtProperties.class, OAuthProperties.class})
 public class AuthWebMvcConfig implements WebMvcConfigurer {
 
     private final AuthUserArgumentResolver authUserArgumentResolver;

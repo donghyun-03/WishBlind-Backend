@@ -1,10 +1,11 @@
 package com.example.wishBlind.global.config;
 
+import com.example.wishBlind.auth.api.AuthController;
+import com.example.wishBlind.auth.api.MeController;
 import com.example.wishBlind.auth.application.AuthService;
 import com.example.wishBlind.auth.application.TokenService;
 import com.example.wishBlind.auth.jwt.JwtProperties;
 import com.example.wishBlind.auth.jwt.JwtTokenProvider;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * 인증 대상이 되는 순간 서비스 핵심 플로우가 통째로 죽는다.
  * SecurityConfig의 규칙을 바꾸려면 이 테스트를 먼저 볼 것.
  */
-@WebMvcTest
+// 검증 대상은 SecurityConfig의 경로 규칙이지 컨트롤러 동작이 아니다.
+// 슬라이스를 인증 컨트롤러로 좁혀야 팀원이 서비스를 추가해도 이 테스트가 안 깨진다.
+// 핸들러가 없는 경로(/api/invite/**, /api/gift-sessions)는 그대로 두는 게 오히려 낫다 —
+// 인가는 핸들러 조회보다 먼저 일어나므로 "401이냐 아니냐"는 그대로 판별된다.
+@WebMvcTest(controllers = {AuthController.class, MeController.class})
 // @WebMvcTest 슬라이스는 @Configuration을 스캔하지 않는다. 명시적으로 넣지 않으면
 // Boot 기본 시큐리티가 응답해서 "내 규칙"이 아니라 기본값을 테스트하게 된다.
 @Import(SecurityConfig.class)
@@ -55,17 +60,26 @@ class SecurityWhitelistTest {
             return new JwtTokenProvider(properties);
         }
 
-        /** @WebMvcTest 슬라이스에는 ObjectMapper가 올라오지 않아 직접 넣어준다. */
-        @Bean
-        ObjectMapper objectMapper() {
-            return new ObjectMapper();
-        }
     }
 
     @Test
-    @DisplayName("수령자 초대 경로는 토큰 없이도 인증에 막히지 않는다")
-    void invitationPathIsOpenToAnonymous() throws Exception {
-        mockMvc.perform(get("/api/invitations/some-token"))
+    @DisplayName("수령자 초대 확인 경로는 토큰 없이도 인증에 막히지 않는다")
+    void invitePathIsOpenToAnonymous() throws Exception {
+        mockMvc.perform(get("/api/invite/some-token"))
+                .andExpect(status().is(not(401)));
+    }
+
+    @Test
+    @DisplayName("수령자 취향 제출 경로는 토큰 없이도 인증에 막히지 않는다")
+    void preferenceSubmitIsOpenToAnonymous() throws Exception {
+        mockMvc.perform(post("/api/invite/some-token/preferences"))
+                .andExpect(status().is(not(401)));
+    }
+
+    @Test
+    @DisplayName("수령자 공개(reveal) 경로는 토큰 없이도 인증에 막히지 않는다")
+    void revealIsOpenToAnonymous() throws Exception {
+        mockMvc.perform(get("/api/invite/some-token/reveal"))
                 .andExpect(status().is(not(401)));
     }
 
@@ -79,7 +93,7 @@ class SecurityWhitelistTest {
     @Test
     @DisplayName("보호된 경로는 토큰 없이 접근하면 401이다")
     void protectedPathRequiresToken() throws Exception {
-        mockMvc.perform(get("/api/gifts"))
+        mockMvc.perform(get("/api/gift-sessions"))
                 .andExpect(status().isUnauthorized());
     }
 

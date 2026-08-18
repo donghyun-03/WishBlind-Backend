@@ -3,7 +3,7 @@ package com.example.wishBlind.auth.jwt;
 import com.example.wishBlind.global.common.ApiResponse;
 import com.example.wishBlind.global.exception.BusinessException;
 import com.example.wishBlind.global.exception.ErrorCode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

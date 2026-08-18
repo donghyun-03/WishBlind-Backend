@@ -49,12 +49,11 @@ public enum ErrorCode {
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "A010", "회원을 찾을 수 없습니다."),
     WITHDRAWN_USER(HttpStatus.FORBIDDEN, "A011", "탈퇴한 회원입니다."),
 
-    // L = AI(LLM) 연결
-    LLM_TIMEOUT(HttpStatus.GATEWAY_TIMEOUT, "L001", "AI 분석이 시간 내에 끝나지 않았습니다."),
+    // L = AI(LLM) 연결.
+    // AI 실패는 사용자에게 노출되지 않고 규칙 기반 코멘트로 폴백되므로, 이 코드들은
+    // HTTP 응답이 아니라 llm_call_logs에 실패 사유를 남기는 용도로만 쓴다.
     LLM_PARSE_ERROR(HttpStatus.BAD_GATEWAY, "L002", "AI 응답 형식이 올바르지 않습니다."),
     LLM_REFUSAL(HttpStatus.UNPROCESSABLE_CONTENT, "L003", "AI가 요청을 처리할 수 없습니다."),
-    LLM_INVALID_PICK(HttpStatus.UNPROCESSABLE_CONTENT, "L004", "조건을 만족하는 추천을 만들지 못했습니다."),
-    LLM_NO_CANDIDATE(HttpStatus.BAD_REQUEST, "L005", "추천할 후보 상품이 없습니다."),
     LLM_CALL_FAILED(HttpStatus.BAD_GATEWAY, "L006", "AI 호출에 실패했습니다.");
 
     private final HttpStatus status;
