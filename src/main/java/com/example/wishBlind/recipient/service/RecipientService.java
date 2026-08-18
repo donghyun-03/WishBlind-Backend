@@ -9,6 +9,8 @@ import com.example.wishBlind.recipient.domain.RecipientPreference;
 import com.example.wishBlind.recipient.dto.InviteInfoResponse;
 import com.example.wishBlind.recipient.dto.PreferenceSubmitRequest;
 import com.example.wishBlind.recipient.repository.RecipientPreferenceRepository;
+import com.example.wishBlind.notification.domain.NotificationType;
+import com.example.wishBlind.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +22,7 @@ public class RecipientService {
 
     private final GiftSessionRepository giftSessionRepository;
     private final RecipientPreferenceRepository preferenceRepository;
+    private final NotificationService notificationService;
 
     /** 초대 링크(토큰)로 확인. */
     public InviteInfoResponse getInviteInfoByToken(String token) {
@@ -56,6 +59,10 @@ public class RecipientService {
 
         preferenceRepository.save(preference);
         session.changeStatus(GiftStatus.ANALYZING);
+
+        // 선물하는 사람에게 취향 입력 완료 알림
+        notificationService.notify(session.getUserId(), NotificationType.TASTE_SUBMITTED,
+                "받는 분이 취향 입력을 완료했어요. 이제 AI가 분석합니다.", session.getId());
     }
 
     private GiftSession findByToken(String token) {

@@ -49,6 +49,9 @@ public enum ErrorCode {
     // 회원 없음은 인증 파트의 USER_NOT_FOUND(A010)를 공용으로 사용한다.
     EMAIL_DUPLICATE(HttpStatus.CONFLICT, "U002", "이미 사용 중인 이메일입니다."),
 
+    // N = 알림(Notification)
+    NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "N001", "알림을 찾을 수 없습니다."),
+
     // A = 인증/회원
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "A001", "인증이 필요합니다."),
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "A002", "유효하지 않은 토큰입니다."),
