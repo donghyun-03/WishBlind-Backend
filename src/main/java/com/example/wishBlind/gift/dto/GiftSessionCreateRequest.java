@@ -49,8 +49,8 @@ public record GiftSessionCreateRequest(
     ) {
     }
 
-    /** DTO → 엔티티 변환. */
-    public GiftSession toEntity() {
+    /** DTO → 엔티티 변환. 소유자는 요청 본문이 아니라 인증 토큰에서만 온다. */
+    public GiftSession toEntity(Long userId) {
         GiverKnownTaste taste = (giverKnownTaste == null) ? null : GiverKnownTaste.builder()
                 .colors(giverKnownTaste.colors())
                 .style(giverKnownTaste.style())
@@ -59,6 +59,7 @@ public record GiftSessionCreateRequest(
                 .build();
 
         return GiftSession.builder()
+                .userId(userId)
                 .relationship(relationship)
                 .occasion(occasion)
                 .budgetMin(budgetMin)

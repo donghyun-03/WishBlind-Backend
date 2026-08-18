@@ -25,6 +25,14 @@ public class GiftSession extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // 선물하는 사람(회원) ID. auth 모듈의 User 엔티티를 직접 참조하지 않고 ID만 들고 있다.
+    // 연관관계를 걸면 gift 모듈이 auth 모듈에 묶인다.
+    //
+    // DDL 상으로는 nullable이다. ddl-auto=update는 행이 이미 있는 테이블에 NOT NULL 컬럼을
+    // 안전하게 붙이지 못한다. 값은 생성자에서 강제하고, NOT NULL 제약은 Flyway 도입 시 건다.
+    @Column(name = "user_id")
+    private Long userId;
+
     // STEP 01 기본 정보
     private String relationship;   // 관계
     private String occasion;       // 기념일/목적
@@ -57,9 +65,13 @@ public class GiftSession extends BaseEntity {
     private String inviteCode;
 
     @Builder
-    public GiftSession(String relationship, String occasion, Integer budgetMin, Integer budgetMax,
+    public GiftSession(Long userId, String relationship, String occasion, Integer budgetMin, Integer budgetMax,
                        String category, String brand, String meaning, List<GiftMood> moods,
                        GiverKnownTaste giverKnownTaste) {
+        if (userId == null) {
+            throw new IllegalArgumentException("선물 세션에는 소유자(userId)가 반드시 있어야 한다.");
+        }
+        this.userId = userId;
         this.relationship = relationship;
         this.occasion = occasion;
         this.budgetMin = budgetMin;
@@ -83,5 +95,9 @@ public class GiftSession extends BaseEntity {
 
     public void changeStatus(GiftStatus status) {
         this.status = status;
+    }
+
+    public boolean isOwnedBy(Long userId) {
+        return this.userId != null && this.userId.equals(userId);
     }
 }

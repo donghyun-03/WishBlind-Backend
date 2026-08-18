@@ -1,6 +1,6 @@
 package com.example.wishBlind.user.dto;
 
-import com.example.wishBlind.user.domain.User;
+import com.example.wishBlind.auth.domain.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "사용자(마이페이지) 응답 — 비밀번호는 노출하지 않음")
