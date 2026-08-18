@@ -16,6 +16,8 @@ import com.example.wishBlind.recommendation.domain.Recommendation;
 import com.example.wishBlind.recommendation.dto.RecommendationDetailResponse;
 import com.example.wishBlind.recommendation.dto.RecommendationResponse;
 import com.example.wishBlind.recommendation.repository.RecommendationRepository;
+import com.example.wishBlind.notification.domain.NotificationType;
+import com.example.wishBlind.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +38,7 @@ public class RecommendationService {
     private final MatchScoreService matchScoreService;
     private final RecommendationRepository recommendationRepository;
     private final AiClient aiClient;
+    private final NotificationService notificationService;
 
     /** 두 사람 정보 결합 → 후보 3개 생성. 상태 RECOMMENDED 전환. */
     @Transactional
@@ -90,6 +93,8 @@ public class RecommendationService {
 
         session.changeStatus(GiftStatus.RECOMMENDED);
         // 소유자 확인은 이 메서드 진입 시 이미 끝났다.
+        notificationService.notify(userId, NotificationType.RECOMMENDED,
+                "AI 추천 후보가 준비됐어요. 확인해보세요.", giftSessionId);
         return toResponses(giftSessionId);
     }
 

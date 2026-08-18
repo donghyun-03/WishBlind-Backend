@@ -15,6 +15,8 @@ import com.example.wishBlind.global.exception.ErrorCode;
 import com.example.wishBlind.product.domain.Product;
 import com.example.wishBlind.recommendation.domain.Recommendation;
 import com.example.wishBlind.recommendation.repository.RecommendationRepository;
+import com.example.wishBlind.notification.domain.NotificationType;
+import com.example.wishBlind.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +31,7 @@ public class DeliveryService {
     private final GiftSessionService giftSessionService;
     private final GiftSessionRepository giftSessionRepository;
     private final RecommendationRepository recommendationRepository;
+    private final NotificationService notificationService;
 
     /** 전달 정보 입력/수정 → 상태 PREPARING(배송 준비 중). */
     @Transactional
@@ -58,6 +61,8 @@ public class DeliveryService {
                         .build()));
 
         session.changeStatus(GiftStatus.PREPARING);
+        notificationService.notify(userId, NotificationType.DELIVERY_STARTED,
+                "선물이 배송 준비 중이에요.", giftSessionId);
         return DeliveryResponse.from(delivery);
     }
 
@@ -73,6 +78,8 @@ public class DeliveryService {
     public void complete(Long giftSessionId, Long userId) {
         GiftSession session = giftSessionService.findOwned(giftSessionId, userId);
         session.changeStatus(GiftStatus.COMPLETED);
+        notificationService.notify(userId, NotificationType.GIFT_COMPLETED,
+                "선물이 전달 완료됐어요!", giftSessionId);
     }
 
     /** 받는 사람 선물 공개. COMPLETED 이전에는 상품을 숨긴다. */
