@@ -23,15 +23,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * ★ 이 테스트가 지키는 것: 없는 경로와 잘못된 메서드가 500으로 둔갑하지 않는다.
- *
- * GlobalExceptionHandler에는 catch-all인 {@code @ExceptionHandler(Exception.class)}가 있다.
- * NoResourceFoundException / HttpRequestMethodNotSupportedException 전용 핸들러가
- * 지워지거나 catch-all에 가려지면 404·405가 전부 500 C001로 나가고,
- * 프론트는 "서버 터짐"과 "오타난 URL"을 구분할 수 없게 된다.
- *
- * 열린 경로(/api/auth/**)로 확인한다. 보호 경로는 인가가 먼저 걸려 401이 되므로
- * 에러 핸들링을 검증할 수 없다.
+ * 없는 경로와 잘못된 메서드가 catch-all에 걸려 500으로 나가지 않는지 확인한다.
+ * 보호 경로는 인가가 먼저 걸려 401이 되므로 열린 경로로 확인한다.
  */
 @WebMvcTest(controllers = AuthController.class)
 @Import({SecurityConfig.class, GlobalExceptionHandler.class})

@@ -24,12 +24,7 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withServerError;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
-/**
- * ★ 이 테스트가 지키는 것: AI가 실패해도 추천 자체는 성립한다.
- *
- * 코멘트는 추천을 읽기 좋게 만드는 값이지 추천의 성립 조건이 아니다.
- * 여기가 깨지면 Gemini 장애나 키 만료가 곧 서비스 장애가 된다.
- */
+/** AI 호출이 실패해도 추천은 성립해야 한다. */
 class GeminiAiClientTest {
 
     private static final String ENDPOINT =

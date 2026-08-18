@@ -16,14 +16,8 @@ import java.net.URI;
 
 /**
  * 구글 access token 검증 + 사용자 정보 조회.
- *
- * ★ tokeninfo를 먼저 부르는 이유 ★
- * userinfo는 "유효한 구글 토큰"이면 어떤 앱에서 발급됐든 응답한다. 그래서 userinfo만
- * 믿으면, 공격자가 자기 앱에서 받은 토큰으로 남의 계정에 로그인할 수 있다(토큰 치환).
- * tokeninfo의 aud가 우리 클라이언트 ID인지 대조해야 "우리 앱에 발급된 토큰"임이 보장된다.
- *
- * 응답을 JsonNode가 아니라 record로 받는 이유: JsonNode는 Jackson 버전에 묶인 타입이라
- * (Boot 4는 Jackson 3) 버전이 바뀌면 조용히 깨진다. record는 어느 변환기든 채워준다.
+ * userinfo는 어느 앱에서 발급된 토큰이든 응답하므로, tokeninfo의 aud가 우리 클라이언트 ID인지
+ * 먼저 대조한다. 대조하지 않으면 다른 앱 토큰으로 남의 계정에 로그인할 수 있다.
  */
 @Component
 public class GoogleOAuthClient implements OAuthClient {

@@ -14,14 +14,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
-/**
- * ★ 이 테스트가 막는 것: 토큰 치환(token substitution) 공격.
- *
- * 카카오/구글의 access token은 "누가 발급했는지"만으로는 우리 앱 것인지 알 수 없다.
- * 공격자가 자기 앱에서 받은 토큰을 우리 서버에 넘기면, 검증이 없을 경우
- * 그 토큰 주인의 계정으로 로그인이 된다.
- * 그래서 토큰의 발급 대상(구글 aud / 카카오 app_id)이 우리 앱인지 반드시 확인해야 한다.
- */
+/** 다른 앱에서 발급된 토큰으로는 로그인되지 않아야 한다. */
 class OAuthTokenAudienceTest {
 
     private static final String OUR_GOOGLE_CLIENT_ID = "our-app.apps.googleusercontent.com";

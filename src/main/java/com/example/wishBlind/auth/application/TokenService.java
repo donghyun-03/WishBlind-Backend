@@ -20,10 +20,7 @@ import java.util.List;
 
 /**
  * access/refresh 토큰의 발급·재발급·폐기.
- *
- * refresh token은 JWT가 아니라 불투명 랜덤 문자열이다. 폐기 여부를 어차피 DB로
- * 관리해야 하므로 토큰 안에 상태를 담을 이유가 없고, 서명 검증 비용도 없다.
- * DB에는 SHA-256 해시만 저장한다 — DB가 유출돼도 그 값으로는 로그인할 수 없어야 한다.
+ * refresh는 폐기를 DB로 관리하므로 JWT가 아닌 랜덤 문자열이고, DB에는 SHA-256 해시만 저장한다.
  */
 @Service
 public class TokenService {

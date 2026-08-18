@@ -22,16 +22,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * ★ 이 테스트가 지키는 것: 수령자(비회원) 경로가 인증에 막히지 않는다.
- *
- * 수령자는 로그인 없이 초대 링크를 열고 취향 테스트를 제출한다. /api/invitations/**가
- * 인증 대상이 되는 순간 서비스 핵심 플로우가 통째로 죽는다.
- * SecurityConfig의 규칙을 바꾸려면 이 테스트를 먼저 볼 것.
+ * 수령자(비회원) 경로가 인증에 막히지 않는지 확인한다.
+ * 슬라이스를 인증 컨트롤러로 좁혀 다른 컨트롤러가 늘어나도 영향받지 않게 한다.
  */
-// 검증 대상은 SecurityConfig의 경로 규칙이지 컨트롤러 동작이 아니다.
-// 슬라이스를 인증 컨트롤러로 좁혀야 팀원이 서비스를 추가해도 이 테스트가 안 깨진다.
-// 핸들러가 없는 경로(/api/invite/**, /api/gift-sessions)는 그대로 두는 게 오히려 낫다 —
-// 인가는 핸들러 조회보다 먼저 일어나므로 "401이냐 아니냐"는 그대로 판별된다.
 @WebMvcTest(controllers = {AuthController.class, MeController.class})
 // @WebMvcTest 슬라이스는 @Configuration을 스캔하지 않는다. 명시적으로 넣지 않으면
 // Boot 기본 시큐리티가 응답해서 "내 규칙"이 아니라 기본값을 테스트하게 된다.

@@ -19,10 +19,8 @@ import java.util.List;
 
 /**
  * Authorization: Bearer 헤더를 읽어 SecurityContext를 채운다.
- *
- * 헤더가 없으면 그냥 통과시킨다 — 인증이 필요한지 여부는 SecurityConfig의
- * 경로 규칙이 판단한다. 이 필터가 막아버리면 permitAll 경로까지 죽는다.
- * 헤더가 있는데 토큰이 잘못된 경우에만 여기서 401을 응답한다.
+ * 헤더가 없으면 통과시키고 인가 여부는 SecurityConfig가 판단한다.
+ * 헤더는 있는데 토큰이 잘못된 경우에만 401을 응답한다.
  */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {

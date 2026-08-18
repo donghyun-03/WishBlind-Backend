@@ -22,14 +22,8 @@ import java.util.Map;
 
 /**
  * Gemini로 추천 코멘트를 생성한다. {@link RuleBasedAiClient}를 @Primary로 대체한다.
- *
- * ★ 실패해도 추천 자체를 깨뜨리지 않는다 ★
- * 코멘트는 추천 결과를 읽기 좋게 만드는 값이지, 추천의 성립 조건이 아니다.
- * 키가 없거나 호출이 실패하면 규칙 기반 코멘트로 조용히 내려간다 —
- * 코멘트 하나 때문에 사용자의 선물 추천 전체가 실패하는 편이 훨씬 나쁘다.
- *
- * 재시도는 하지 않는다. 폴백이 항상 성공하므로 재시도로 얻을 게 없고,
- * 후보 3개마다 호출되므로 재시도가 곧 3배 지연이 된다.
+ * 키가 없거나 호출이 실패하면 규칙 기반 코멘트로 폴백한다 — 코멘트 때문에 추천 전체가 실패하면 안 된다.
+ * 후보 3개마다 호출되므로 재시도는 하지 않는다.
  */
 @Component
 @Primary
@@ -117,9 +111,7 @@ public class GeminiAiClient implements AiClient {
 
     /**
      * 응답에서 첫 텍스트를 꺼낸다.
-     *
-     * 안전 필터에 걸리거나(finishReason=SAFETY) 토큰이 잘리면 candidates는 있는데
-     * content가 통째로 비어서 온다. 예외가 아니라 200이므로 여기서 걸러야 한다.
+     * 안전 필터(SAFETY)나 토큰 초과 시 candidates는 있는데 content가 비어서 200으로 오므로 여기서 거른다.
      */
     private String extractText(GeminiResponse response) {
         if (response == null || response.candidates() == null) {

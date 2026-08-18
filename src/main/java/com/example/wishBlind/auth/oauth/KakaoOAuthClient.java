@@ -16,13 +16,8 @@ import java.net.URI;
 
 /**
  * 카카오 access token 검증 + 사용자 정보 조회.
- *
- * ★ access_token_info를 먼저 부르는 이유 ★
- * /v2/user/me는 유효한 카카오 토큰이면 어느 앱에서 발급됐든 응답한다. app_id를 대조하지
- * 않으면 공격자가 자기 앱 토큰으로 남의 계정에 로그인할 수 있다(토큰 치환).
- *
- * email/nickname은 비어 있을 수 있다 — 카카오 콘솔에서 동의항목을 안 켰거나 사용자가
- * 동의하지 않은 경우다. 그래도 로그인 자체는 성립해야 하므로 실패시키지 않는다.
+ * /v2/user/me는 어느 앱에서 발급된 토큰이든 응답하므로, access_token_info의 app_id를 먼저 대조한다.
+ * email/nickname은 동의항목 설정에 따라 비어 있을 수 있고, 그래도 로그인은 성립시킨다.
  */
 @Component
 public class KakaoOAuthClient implements OAuthClient {
