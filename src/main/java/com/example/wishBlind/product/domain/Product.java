@@ -71,4 +71,9 @@ public class Product extends BaseEntity {
         this.imageUrl = imageUrl;
         this.stock = stock;
     }
+
+    /** 이미지 URL 교체(예: Pexels 실제 사진으로 보강). */
+    public void updateImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }
