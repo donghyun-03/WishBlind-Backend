@@ -23,9 +23,9 @@ public class GeminiConfig {
     @Bean
     public RestClient geminiRestClient(GeminiProperties properties) {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-        Duration timeout = Duration.ofSeconds(properties.timeoutSeconds());
-        factory.setConnectTimeout(timeout);
-        factory.setReadTimeout(timeout);
+        // connect는 짧게(2초), read는 설정값(기본 10초). 느리면 빨리 실패시켜 규칙 기반으로 폴백한다.
+        factory.setConnectTimeout(Duration.ofSeconds(2));
+        factory.setReadTimeout(Duration.ofSeconds(properties.timeoutSeconds()));
 
         return RestClient.builder()
                 .requestFactory(factory)
