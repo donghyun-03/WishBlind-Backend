@@ -46,6 +46,10 @@ gemini:
   max-output-tokens: 600
   timeout-seconds: 30
 
+# 상품 이미지 보강(Pexels). 키가 비어 있으면 placeholder 이미지를 그대로 쓴다.
+pexels:
+  api-key: ${PEXELS_API_KEY:}
+
 logging:
   level:
     org.hibernate.SQL: debug
